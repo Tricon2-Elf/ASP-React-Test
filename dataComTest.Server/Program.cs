@@ -41,19 +41,41 @@ namespace dataComTest.Server
                 return forecast;
             });
 
-            app.MapGet("/nation", (HttpContext httpContext) =>
+
+            app.MapGet("/nation", async (string? name) =>
             {
-                return NationalizeClient.GetResponseAsync("tom").Result;
+                if (string.IsNullOrWhiteSpace(name))
+                    return Results.BadRequest("Missing or empty 'name' query parameter.");
+                var result = await NationalizeClient.GetResponseAsync(name);
+
+                return result is not null
+                    ? Results.Ok(result)
+                    : Results.Problem("Failed to fetch nationalization data.");
             });
 
-            app.MapGet("/gender", (HttpContext httpContext) =>
+            app.MapGet("/allify", async (string? name) =>
             {
-                return GenderizeClient.GetResponseAsync("tom", "US").Result;
+                if (string.IsNullOrWhiteSpace(name))
+                    return Results.BadRequest("Missing or empty 'name' query parameter.");
+
+
+                var nationData = await NationalizeClient.GetResponseAsync(name);
+                string? countryID = nationData?.Countries?[0].CountryID;
+                var genderData = await GenderizeClient.GetResponseAsync(name, countryID);
+                var ageData = await AgifyClient.GetResponseAsync(name, countryID);
+                var result = new AllifyResponse
+                {
+                    Name = name,
+                    Age = ageData.Age,
+                    Gender = genderData.Gender,
+                    CountryID = countryID
+                };
+                return result is not null
+                    ? Results.Ok(result)
+                    : Results.Problem("Failed to fetch All API data.");
             });
-            app.MapGet("/age", (HttpContext httpContext) =>
-            {
-                return AgifyClient.GetResponseAsync("tom", "US").Result;
-            });
+
+
 
             app.MapFallbackToFile("/index.html");
 
