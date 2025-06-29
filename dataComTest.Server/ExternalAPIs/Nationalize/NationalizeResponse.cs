@@ -4,10 +4,10 @@ namespace dataComTest.Server.ExternalAPIs.Nationalize
 {
     public class NationalizeResponse
     {
-        [JsonPropertyName("country_id")]
-        public string? CountryCode {  get; set; }
+        [JsonPropertyName("name")]
+        public string? Name { get; set; }
 
-        [JsonPropertyName("probability")]
-        public float Probability { get; set; }
+        [JsonPropertyName("country")]
+        public List<NationalizeCountry>? Countries { get; set; }
     }
 }
