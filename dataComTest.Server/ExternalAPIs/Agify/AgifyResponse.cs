@@ -6,34 +6,18 @@ namespace dataComTest.Server.ExternalAPIs.Agify
     public class AgifyResponse
     {
         [JsonPropertyName("name")]
-        public string? Name { get; set; }
+        public required string Name { get; set; }
 
         [JsonPropertyName("age")]
-        public int Age { get; set; }
+        public int? Age { get; set; } //Age can be recieved as null if name isn't in their data
 
         [JsonPropertyName("count")]
-        public int Count { get; set; }
+        public required int Count { get; set; }
 
         [JsonPropertyName("country_id")]
-        public string? CountryID { get; set; }
+        public string?  CountryID { get; set; }
 
         [JsonPropertyName("country_name")]
-        public string CountryName
-        {
-            get
-            {
-                try
-                {
-                    if (!string.IsNullOrWhiteSpace(CountryID))
-                        return new RegionInfo(CountryID).EnglishName;
-                    else
-                        throw new ArgumentException("Invalid Country Code");
-                }
-                catch
-                {
-                    return "Unknown";
-                }
-            }
-        }
+        public string CountryName => Utils.GetCountryNameByID(CountryID ?? "");
     }
 }
