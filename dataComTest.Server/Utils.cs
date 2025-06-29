@@ -15,7 +15,7 @@ namespace dataComTest.Server
             }
             catch
             {
-                return "Unknown";
+                return "";
             }
         }
     }

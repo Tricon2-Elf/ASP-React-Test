@@ -23,56 +23,35 @@ namespace dataComTest.Server
 
             app.UseAuthorization();
 
-            var summaries = new[]
-            {
-                "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-            };
-
-            app.MapGet("/weatherforecast", (HttpContext httpContext) =>
-            {
-                var forecast = Enumerable.Range(1, 5).Select(index =>
-                    new WeatherForecast
-                    {
-                        Date = DateOnly.FromDateTime(DateTime.Now.AddDays(index)),
-                        TemperatureC = Random.Shared.Next(-20, 55),
-                        Summary = summaries[Random.Shared.Next(summaries.Length)]
-                    })
-                    .ToArray();
-                return forecast;
-            });
-
-
-            app.MapGet("/nation", async (string? name) =>
-            {
-                if (string.IsNullOrWhiteSpace(name))
-                    return Results.BadRequest("Missing or empty 'name' query parameter.");
-                var result = await NationalizeClient.GetResponseAsync(name);
-
-                return result is not null
-                    ? Results.Ok(result)
-                    : Results.Problem("Failed to fetch nationalization data.");
-            });
-
             app.MapGet("/allify", async (string? name) =>
             {
+                //Make sure the name provided from the frontend is valid
                 if (string.IsNullOrWhiteSpace(name))
                     return Results.BadRequest("Missing or empty 'name' query parameter.");
 
 
                 var nationData = await NationalizeClient.GetResponseAsync(name);
-                string? countryID = nationData?.Countries?[0].CountryID;
+                //Get the Couuntry ID returned from the nationlize client to provide to both the Gender and Age clients.
+                string countryID = nationData?.Countries?.FirstOrDefault()?.CountryID ?? "";
+
+                //Capture both Gender and Age data providing name and country
                 var genderData = await GenderizeClient.GetResponseAsync(name, countryID);
                 var ageData = await AgifyClient.GetResponseAsync(name, countryID);
+
+                //Check if data from age and gender API have data
+                if (ageData == null || genderData == null)
+                {
+                    return Results.Problem("Failed to fetch All API data.");
+                }
+                //Generate response to send to frontend
                 var result = new AllifyResponse
                 {
                     Name = name,
-                    Age = ageData.Age,
-                    Gender = genderData.Gender,
-                    CountryID = countryID
+                    Age = ageData.Age ?? 0,
+                    Gender = genderData.Gender ?? "",
+                    CountryName = Utils.GetCountryNameByID(countryID)
                 };
-                return result is not null
-                    ? Results.Ok(result)
-                    : Results.Problem("Failed to fetch All API data.");
+                return Results.Ok(result);
             });
 
 
