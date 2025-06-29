@@ -4,9 +4,8 @@ namespace dataComTest.Server.ExternalAPIs.Nationalize
 {
     public class NationalizeClient
     {
-
-        private static string endPoint = "https://api.nationalize.io/";
-        private static HttpClient httpClient = new HttpClient();
+        private static readonly string endPoint = "https://api.nationalize.io/";
+        private static readonly HttpClient httpClient = new HttpClient();
 
         public static async Task<NationalizeResponse?> GetResponseAsync(string name)
         {
@@ -36,6 +35,5 @@ namespace dataComTest.Server.ExternalAPIs.Nationalize
                 return null;
             }   
         }
-
     }
 }
