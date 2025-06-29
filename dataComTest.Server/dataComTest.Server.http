@@ -1,0 +1,6 @@
+@dataComTest.Server_HostAddress = http://localhost:5023
+
+GET {{dataComTest.Server_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
