@@ -1,3 +1,4 @@
+using dataComTest.Server.ExternalAPIs.Agify;
 using dataComTest.Server.ExternalAPIs.Genderize;
 using dataComTest.Server.ExternalAPIs.Nationalize;
 
@@ -43,6 +44,15 @@ namespace dataComTest.Server
             app.MapGet("/nation", (HttpContext httpContext) =>
             {
                 return NationalizeClient.GetResponseAsync("tom").Result;
+            });
+
+            app.MapGet("/gender", (HttpContext httpContext) =>
+            {
+                return GenderizeClient.GetResponseAsync("tom", "US").Result;
+            });
+            app.MapGet("/age", (HttpContext httpContext) =>
+            {
+                return AgifyClient.GetResponseAsync("tom", "US").Result;
             });
 
             app.MapFallbackToFile("/index.html");
