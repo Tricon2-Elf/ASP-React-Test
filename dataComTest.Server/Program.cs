@@ -1,3 +1,6 @@
+using dataComTest.Server.ExternalAPIs.Genderize;
+using dataComTest.Server.ExternalAPIs.Nationalize;
+
 namespace dataComTest.Server
 {
     public class Program
@@ -35,6 +38,11 @@ namespace dataComTest.Server
                     })
                     .ToArray();
                 return forecast;
+            });
+
+            app.MapGet("/nation", (HttpContext httpContext) =>
+            {
+                return NationalizeClient.GetResponseAsync("tom").Result;
             });
 
             app.MapFallbackToFile("/index.html");
