@@ -14,12 +14,11 @@ namespace dataComTest.Server.ExternalAPIs.Nationalize
             if (string.IsNullOrWhiteSpace(name))
                 throw new ArgumentException("Provided name is blank");
 
-            //Generate url from https://api.nationalize.io/?name=johnson
-            string url = $"https://api.nationalize.io/?name={Uri.EscapeDataString(name)}";
+            string url = $"{endPoint}/?name={Uri.EscapeDataString(name)}";
 
             try
             {
-                using var response = await httpClient.GetAsync(url);
+                using HttpResponseMessage response = await httpClient.GetAsync(url);
 
                 if(!response.IsSuccessStatusCode)
                 {
