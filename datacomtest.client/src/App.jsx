@@ -2,10 +2,12 @@ import { useState } from 'react';
 import './App.css';
 
 function App() {
+    //States for users name, ressult demographic data, and for displaying a loading screen
     const [name, setName] = useState('');
     const [demographicData, setDemographicData] = useState();
     const [loading, setLoading] = useState(false);
 
+    //Set contents to either Loading, Starting message or returned demographic data from the API
     const contents = loading ? (
         <p><em>Loading...</em></p>
     ) : demographicData === undefined ? (
@@ -35,10 +37,12 @@ function App() {
     
     async function populateDemographicData() {
         setLoading(true);
+        //Clear demographic data so that it will display the 'loading' message
         setDemographicData(undefined);
         try {
             const response = await fetch(`allify?name=${encodeURIComponent(name)}`);
             if (response.ok) {
+                //Get json response from the /allify path
                 const data = await response.json();
                 if (data.age === 0) data.age = "Not in dataset";
                 if (data.gender === "") data.gender = "Not in dataset";
