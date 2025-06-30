@@ -11,12 +11,12 @@ function App() {
                 Gender: {demographicData.gender}<br/>
                 Age: {demographicData.age}<br/>
                 Country: {demographicData.country_name}
-            </div>
+         </div>
 
     return (
         <div>
-            <h1 id="tableLabel">Weather forecast</h1>
-            <p>This component demonstrates fetching data from the server.</p>
+            <h1>Predict Age, Gender and Ethnicity</h1>
+            <p>This website uses <a href="https://nationalize.io">nationalize.io</a>, <a href="https://genderize.io">genderize.io</a> and <a href="https://agify.io">agify.io</a> to estimate the name, gender and ethnicity of the entered name</p>
             <input
                 type="text"
                 value={name}
