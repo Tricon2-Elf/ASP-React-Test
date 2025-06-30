@@ -4,14 +4,19 @@ import './App.css';
 function App() {
     const [name, setName] = useState('');
     const [demographicData, setDemographicData] = useState();
+    const [loading, setLoading] = useState(false);
 
-    const contents = demographicData === undefined
-        ? <p><em>Enter a name and press Estimate</em></p>
-        : <div>
-                Gender: {demographicData.gender}<br/>
-                Age: {demographicData.age}<br/>
-                Country: {demographicData.country_name}
-         </div>
+    const contents = loading ? (
+        <p><em>Loading...</em></p>
+    ) : demographicData === undefined ? (
+        <p><em>Enter a name and press Estimate</em></p>
+    ) : (
+        <div>
+            Gender: {demographicData.gender}<br />
+            Age: {demographicData.age}<br />
+            Country: {demographicData.country_name}
+        </div>
+    );
 
     return (
         <div>
@@ -29,16 +34,19 @@ function App() {
     );
     
     async function populateDemographicData() {
-        const response = await fetch(`allify?name=${encodeURIComponent(name)}`);
-        if (response.ok) {
-            const data = await response.json();
-            if (data.age == 0)
-                data.age = "Not in dataset"
-            if (data.gender == "")
-                data.gender = "Not in dataset"
-            if (data.country_name == "")
-                data.country_name = "Not in dataset"
-            setDemographicData(data);
+        setLoading(true);
+        setDemographicData(undefined);
+        try {
+            const response = await fetch(`allify?name=${encodeURIComponent(name)}`);
+            if (response.ok) {
+                const data = await response.json();
+                if (data.age === 0) data.age = "Not in dataset";
+                if (data.gender === "") data.gender = "Not in dataset";
+                if (data.country_name === "") data.country_name = "Not in dataset";
+                setDemographicData(data);
+            }
+        } finally {
+            setLoading(false);
         }
     }
 }
